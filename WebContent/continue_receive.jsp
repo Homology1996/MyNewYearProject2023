@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*,java.net.*"%>
-<%@ page import="javax.servlet.http.*,javax.servlet.*" %>
-<%@ page import="java.text.SimpleDateFormat" %><!-- JSP時間轉換格式 -->
-<%@ page import="java.lang.Math" %><!-- 處理long類型計算的套件 -->
+<%@ page import="javax.servlet.http.*,javax.servlet.*"%>
+<%@ page import="java.text.SimpleDateFormat"%><!-- JSP時間轉換格式 -->
+<%@ page import="java.lang.Math"%><!-- 處理long類型計算的套件 -->
 <!-- 引入JSTL -->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
@@ -11,12 +11,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
-	<style>
-		body{
-            background-image:url("images/back.png");
-            background-size:cover;
-        }
-	</style>
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,12 +30,18 @@
 	<!-- Bootstrap時間挑選器 -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+	<style>
+		body{
+            background-image:url("images/back.png");
+            background-size:cover;
+        }
+	</style>
 </head>
 <body>
 	<c:set var="order_name" value="${param['Order_name']}"/>
 	<c:set var="item_index" value="${param['Item_index']}"/>
-	<c:set var="extend" value="${param['Extend']}"/>
-	<c:set var="item_rent_time" value="${extend}"/>
+	<c:set var="extend" value="${param['Extend']}"/> <!-- 選擇的延長時間 -->
+	<c:set var="item_rent_time" value="${extend}"/>  <!-- 選擇的延長時間 -->
 	<!-- 設置使用參數 -->
 	<c:set var="ID_Value_list"/>
 	<c:set var="imageID"/>
@@ -65,7 +65,7 @@
 	%>
 	<sql:setDataSource var="DataBase" driver="com.mysql.cj.jdbc.Driver"
 	url="${DataBaseURL}" user="${DataBaseUserAccount}" password="${DataBaseUserPassword}"/>
-	<!-- 讀取商品資料庫並設置計算價格參數 -->
+	<!-- 讀取商品資料庫並設置價格參數 -->
 	<c:set var="New" value="${1.5}"/>
 	<c:set var="Old" value="${0.7}"/>
 	<sql:query dataSource="${DataBase}" var="commodity">
@@ -171,7 +171,7 @@
 	String STRitem_rent_time=(String)pageContext.getAttribute("item_rent_time");
 	int item_rent_time=Integer.parseInt(STRitem_rent_time);
 	String Purchasetime=(String)pageContext.getAttribute("Purchasetime");
-	String Start=(String)pageContext.getAttribute("ExtendedEnd");/*要換成新的起始時間了*/
+	String Start=(String)pageContext.getAttribute("OriginalEnd");/*原本的結束時間變成新的起始時間*/
 	double money=Summation(New,Old,Cost,Life_month,item_rent_time,Purchasetime,Start);
 	pageContext.setAttribute("ThisRent",money);
 	%>
@@ -213,12 +213,13 @@
 					<img src="${imageID}" width="95%" height="95%">
 				</div><!-- 對應到col-6 -->
 				<div class="col-6">
-					<h3>商品編號 : <c:out value="${item_index}"/></h3>
-					<h4>租期 : <c:out value="${item_rent_time}"/> 個月</h4>
-					<h5>起始時間 : <c:out value="${OriginalEnd}"/></h5>
-					<h5>結束時間 : <c:out value="${ExtendedEnd}"/></h5>
-					<h4>商品價格 : <c:out value="${ThisRentFinal}"/>元</h4>
-					<h3>請選擇付款方式
+					<h3>商品編號 : ${item_index}</h3>
+					<h4>租期 : ${item_rent_time} 個月</h4>
+					<h5>起始時間 : ${OriginalEnd}</h5>
+					<h5>結束時間 : ${ExtendedEnd}</h5>
+					<h4>商品價格 : ${ThisRentFinal}元</h4>
+					<h3>
+						請選擇付款方式
 						<select class="form-select" name="pay">
 							<option value="mobile_payment">行動支付</option>
 							<option value="credit_card">信用卡</option>

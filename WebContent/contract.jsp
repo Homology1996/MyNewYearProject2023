@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.io.*,java.util.*,java.sql.*"%>
-<%@ page import="javax.servlet.http.*,javax.servlet.*" %>
-<%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="java.lang.Math" %>
+<%@ page import="java.io.*,java.util.*,java.sql.*,java.net.*"%>
+<%@ page import="javax.servlet.http.*,javax.servlet.*"%>
+<%@ page import="java.text.SimpleDateFormat"%><!-- JSP時間轉換格式 -->
+<%@ page import="java.lang.Math"%><!-- 處理long類型計算的套件 -->
 <!-- 引入JSTL -->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
@@ -33,14 +33,7 @@
 	<style>
 		body{
             background-color:rgba(225,245,241,0.947);
-            background-size:cover;
             }
-		#div_all{
-        	width:100%;
-        	height:80%;
-        	margin:0 auto;
-        	text-align:center;
-        }
 	</style>
 </head>
 <body>
@@ -75,12 +68,7 @@
     		<div class="col-2"></div><!-- 空白部分 -->
     	</div>
     </div>
-    <div class="container" id="div_all">
-		<br>
-		<div class="row">
-			<div class="col-12"></div>
-		</div>
-	</div>
+    <br>
 	<!-- 引用Bootstrap -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>

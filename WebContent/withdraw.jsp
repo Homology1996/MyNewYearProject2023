@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*,java.net.*"%>
-<%@ page import="javax.servlet.http.*,javax.servlet.*" %>
-<%@ page import="java.text.SimpleDateFormat" %><!-- JSP時間轉換格式 -->
-<%@ page import="java.lang.Math" %><!-- 處理long類型計算的套件 -->
+<%@ page import="javax.servlet.http.*,javax.servlet.*"%>
+<%@ page import="java.text.SimpleDateFormat"%><!-- JSP時間轉換格式 -->
+<%@ page import="java.lang.Math"%><!-- 處理long類型計算的套件 -->
 <!-- 引入JSTL -->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
@@ -126,13 +126,15 @@
 						pageContext.setAttribute("imageID",ImageID);
 						%>
 						<tr>
-							<td><c:out value="${row.order_name}"/></td>
-							<td><c:out value="${row.item_index}"/></td>
-							<td><c:out value="${row.item_rent_time}"/>個月</td>
-							<td><c:out value="${row.start}"/></td>
-							<td><c:out value="${row.end}"/></td>
-							<td><c:out value="${row.price}"/>元</td>
+							<td>${row.order_name}</td>
+							<td>${row.item_index}</td>
+							<td>${row.item_rent_time}個月</td>
+							<td>${row.start}</td>
+							<td>${row.end}</td>
+							<td>${row.price}元</td>
 						</tr>
+						<c:remove var="ThisStart"/>
+						<c:remove var="ThisEnd"/>
 					</c:if>
 				</c:forEach>
 			</table>

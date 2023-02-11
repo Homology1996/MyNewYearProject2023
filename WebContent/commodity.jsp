@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.io.*,java.util.*,java.sql.*"%>
-<%@ page import="javax.servlet.http.*,javax.servlet.*" %>
-<%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="java.lang.Math" %>
+<%@ page import="java.io.*,java.util.*,java.sql.*,java.net.*"%>
+<%@ page import="javax.servlet.http.*,javax.servlet.*"%>
+<%@ page import="java.text.SimpleDateFormat"%><!-- JSP時間轉換格式 -->
+<%@ page import="java.lang.Math"%><!-- 處理long類型計算的套件 -->
 <!-- 引入JSTL -->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
@@ -14,7 +14,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>商品資訊</title>
+	<title>商品總覽</title>
 	<!-- 引用Bootstrap -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 	<!-- 引用外部css -->
@@ -32,9 +32,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 	<style>
 		body{
-            /*background-image:url("images/back.png");*/
             background-color:rgba(225,245,241,0.947);
-            background-size:cover;
         }
         #div_top{
         	height:20%;
@@ -51,13 +49,15 @@
 </head>
 <body>
 	<br>
+	<!-- 上方狀態列按鈕 -->
 	<div class="container-fluid" id="div_top"><!-- fluid:讓div的寬度佔滿版面 -->
 		<div class="row">
-			<div class="col-2"><button class="btn">商品資訊</button></div>
+			<div class="col-2"><button class="btn">商品總覽</button></div>
 			<div class="col-2">
 				<button class="btn" onclick="javascript:Login();">
 					<script>
 						function Login(){
+							/*達到超連結的功能，但又不影響按鍵的外觀*/
 							window.location.assign("login.jsp");
 						}
 					</script>
@@ -74,9 +74,10 @@
 				進入購物車
 				</button>
 			</div>
+			<!-- 下拉式選單 -->
 			<div class="col-2">
 				<div class="dropdown">
-					<button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">種類</button>
+					<button type="button" class="btn dropdown-toggle" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">種類</button>
   					<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="ul_button1">
     					<li>
     						<a class="dropdown-item" href="select.jsp" onclick="javascript:AddSelection1();"><!-- 點擊超連結時順便增加cookie -->
@@ -185,13 +186,13 @@
 							window.location.assign("index.html");
 						}
 					</script>
-					返回首頁
+				返回首頁
 				</button>
 			</div>
 		</div><!-- 對應到row -->
 	</div><!-- 對應到container-fluid -->
 	<br>
-    <!-- ------------------------------------------------------------------------------------------------------- -->
+    <!-- 資料庫連線 -->
     <c:set var="DataBaseName" value="newyear"/>
 	<c:set var="DataBaseUserAccount" value="newyear"/>
 	<c:set var="DataBaseUserPassword" value="newyear"/>
@@ -203,9 +204,11 @@
 	%>
 	<sql:setDataSource var="DataBase" driver="com.mysql.cj.jdbc.Driver"
 	url="${DataBaseURL}" user="${DataBaseUserAccount}" password="${DataBaseUserPassword}"/>
+	<!-- 查詢商品資料表 -->
 	<sql:query dataSource="${DataBase}" var="result">
     	SELECT * FROM commodity;
 	</sql:query>
+	<!-- 顯示商品圖片 -->
     <div class="container" id="div_all">
     	<div class="row">
     		<c:forEach var="row" items="${result.rows}">
@@ -220,8 +223,8 @@
 				pageContext.setAttribute("pic",Pic);
 				%>
 				<div class="col-4">
-					<a href=<c:out value="${web}"/>><!-- 直接把c:out輸出的字串拿來使用，不用再另外定一個字串變數 -->
-   						<img src=<c:out value="${pic}"/> width="90%" height="90%">
+					<a href="${web}">
+   						<img src="${pic}" width="90%" height="90%">
    					</a>
 				</div>
 				<c:remove var="web"/>

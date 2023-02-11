@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*,java.net.*"%>
-<%@ page import="javax.servlet.http.*,javax.servlet.*" %>
-<%@ page import="java.text.SimpleDateFormat" %><!-- JSP時間轉換格式 -->
-<%@ page import="java.lang.Math" %><!-- 處理long類型計算的套件 -->
+<%@ page import="javax.servlet.http.*,javax.servlet.*"%>
+<%@ page import="java.text.SimpleDateFormat"%><!-- JSP時間轉換格式 -->
+<%@ page import="java.lang.Math"%><!-- 處理long類型計算的套件 -->
 <!-- 引入JSTL -->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
@@ -32,9 +32,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 	<style>
 		body{
-            /*background-image:url("images/back.png");*/
             background-color:rgba(225,245,241,0.947);
-            background-size:cover;
         }
 		#div_all{
     		width:100%;
@@ -162,15 +160,9 @@
 	%>
 	<sql:setDataSource var="DataBase" driver="com.mysql.cj.jdbc.Driver"
 	url="${DataBaseURL}" user="${DataBaseUserAccount}" password="${DataBaseUserPassword}"/>
+	<br>
 	<div class="container" id="div_all">
     	<div class="row">
-    		<br>
-    		<div class="container">
-    			<div class="row">
-    				
-    			</div>
-    		</div>
-    		<br>
     		<c:choose>
     			<c:when test="${word=='床'||word=='桌子'||word=='冰箱'||word=='電視'||word=='冷氣'||word=='洗衣機'}">
     				<sql:query dataSource="${DataBase}" var="result">
@@ -212,7 +204,6 @@
 						pageContext.setAttribute("detail",Detail);
 						pageContext.setAttribute("pic",Pic);
 						%>               
-	                      
 					    <div class="col-4" style="padding:15px 20px;">
 							<a href="${detail}">
 								<img src="${pic}" width="100%" height="100%">

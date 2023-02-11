@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*,java.net.*"%>
-<%@ page import="javax.servlet.http.*,javax.servlet.*" %>
-<%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="java.lang.Math" %>
+<%@ page import="javax.servlet.http.*,javax.servlet.*"%>
+<%@ page import="java.text.SimpleDateFormat"%><!-- JSP時間轉換格式 -->
+<%@ page import="java.lang.Math"%><!-- 處理long類型計算的套件 -->
 <!-- 引入JSTL -->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
@@ -44,14 +44,13 @@
 	</style>
 </head>
 <body>
-	<c:set var="id_Value_list"/>
-	<c:set var="Price" value="${0}"/>
+	<!-- 設定使用參數 -->
+	<c:set var="id_Value_list"/><!-- 商品編號與租期 -->
+	<c:set var="Price" value="${0}"/> <!-- 總金額 -->
 	<!-- 讀取表單送出資訊 -->
 	<%
-	/*找出表單送出的所有變數與數值，並且把結果儲存到一個list裡面。奇數項為名稱，偶數項為數值*/
-	/*在JSTL則是把結果儲存到一個字串，用逗點隔開項目。奇數項為名稱，偶數項為數值*/
-	Enumeration ParameterNames=request.getParameterNames();
-	List<String> id_value_list=new ArrayList<String>();
+	Enumeration ParameterNames=request.getParameterNames();/*讀取多個送出結果*/
+	List<String> id_value_list=new ArrayList<String>();/*java物件，沒有使用*/
 	while(ParameterNames.hasMoreElements()){
 		String Id_value_list=(String)pageContext.getAttribute("id_Value_list");
 		/*------------------------------------------------------*/
@@ -69,11 +68,12 @@
 		Id_value_list=Id_value_list.substring(1);
 		pageContext.setAttribute("id_Value_list",Id_value_list);
 	}
+	/*最後輸出的結果為:商品編號=幾個月,商品編號=起始時間,...*/
 	%>
 	<!-- 把表單送的資料拆開來 -->
 	<c:set var="ID_Value_list"/>
 	<c:set var="Start_ID_list"/>
-	<c:forTokens  var="name" delims="," items="${id_Value_list}">
+	<c:forTokens var="name" delims="," items="${id_Value_list}">
 		<c:choose>
 			<c:when test="${fn:contains(name,'-')}">
 				<%
@@ -117,12 +117,12 @@
 					<div class="row">
 						<c:forTokens var="Item_Value" delims="," items="${ID_Value_list}"><!-- 先把項目清單拆開來 -->
 							<c:set var="array" value="${fn:split(Item_Value,'=')}"/>
-							<c:set var="ID" value="${array[0]}"/>
-							<c:set var="Value" value="${array[1]}"/>
-							<c:set var="InfoID"/>
-							<c:set var="PicID"/>
-							<c:set var="ImgID"/>
-							<c:set var="StartID"/>
+							<c:set var="ID" value="${array[0]}"/>    <!-- 商品編號 -->
+							<c:set var="Value" value="${array[1]}"/> <!-- 租期 -->
+							<c:set var="InfoID"/>                    <!-- jQuery使用的id選擇器 -->
+							<c:set var="PicID"/>                     <!-- jQuery使用的id選擇器 -->
+							<c:set var="ImgID"/>                     <!-- 引用的圖片路徑 -->
+							<c:set var="StartID"/>                   <!-- 接收購物車送出的起始時間變數 -->
 							<%
 							String id=(String)pageContext.getAttribute("ID");
 							String value=(String)pageContext.getAttribute("Value");
@@ -137,12 +137,13 @@
 							%>
 							<div class="col-6" id="${PicID}">
 								<img src="${ImgID}" width="95%" height="95%">
-							</div><!-- 對應到PicID -->
+							</div>
 							<div class="col-6" id="${InfoID}">
 								<br>
-								<h3>商品編號 : <c:out value="${ID}"/></h3>
+								<h3>商品編號 : ${ID}</h3>
 								<br>
-								<h4>租期 : <c:out value="${Value}"/> 個月</h4>
+								<h4>租期 : ${Value} 個月</h4>
+								<!-- 資料庫連線 -->
 								<c:set var="DataBaseName" value="newyear"/>
 								<c:set var="DataBaseUserAccount" value="newyear"/>
 								<c:set var="DataBaseUserPassword" value="newyear"/>
@@ -154,6 +155,7 @@
 								%>
 								<sql:setDataSource var="DataBase" driver="com.mysql.cj.jdbc.Driver"
 								url="${DataBaseURL}" user="${DataBaseUserAccount}" password="${DataBaseUserPassword}"/>
+								<!-- 查詢商品資料表 -->
     							<sql:query dataSource="${DataBase}" var="result">
 			    					SELECT * FROM commodity;
 								</sql:query>
@@ -164,7 +166,7 @@
 											<c:set var="array" value="${fn:split(name,'=')}"/>
 											<c:if test="${array[0]==row.item_index}">
 												<br>
-												<h5>起始時間 : <c:out value="${array[1]}"/></h5>
+												<h5>起始時間 : ${array[1]}</h5>
 												<!-- 使用折舊費率計算租金 -->
 												<c:set var="New" value="${1.5}"/>
 												<c:set var="Old" value="${0.7}"/>
@@ -264,7 +266,8 @@
 												%>
 												<fmt:formatNumber var="ThisRentFinal" value="${ThisRent}" groupingUsed="false" minFractionDigits="0" maxFractionDigits="0"/>
 												<br>
-												<h4>商品價格 : <c:out value="${ThisRentFinal}"/>元</h4>
+												<h4>商品價格 : ${ThisRentFinal} 元</h4>
+												<!-- 計算總金額 -->
 												<%
 												long Price=(long)pageContext.getAttribute("Price");
 												String STRThisRentFinal=(String)pageContext.getAttribute("ThisRentFinal");
@@ -272,6 +275,7 @@
 												Price+=ThisRentFinal;
 												pageContext.setAttribute("Price",Price);
 												%>
+												<!-- 表單送出的變數。用來記錄幾號商品從何時開始承租 -->
 												<input type="hidden" name="${StartID}" value="${Start}">
 											</c:if>
 										</c:forTokens>
@@ -298,12 +302,12 @@
 				</div><!-- 對應到div_all -->
 				<div class="container" id="div_all">
 					<div class="row">
-						<div class="col-6"></div>
+						<div class="col-6"></div><!-- 空白部分 -->
 						<div class="col-6">												
 							<table class="table">
 								<tr>
 									<td><h3>總金額</h3></td>
-									<td><h3><c:out value="${Price}"/> 元</h3></td>
+									<td><h3>${Price} 元</h3></td>
 								</tr>
 								<tr>
 									<td><h3>付款方式</h3></td>
@@ -332,7 +336,7 @@
 									</td>
 								</tr>
 							</table>						
-						</div>
+						</div><!-- 對應到col-6 -->
 					</div><!-- 對應到row -->
 				</div><!-- 對應到div_all -->
 				<input type="hidden" name="ID_Value_list" value="${ID_Value_list}">
@@ -341,7 +345,7 @@
 			<br>
 			<script>
 				$(document).ready(function(){
-					$('#noselect').attr('disabled',true);/*停用相同class的功能，這裡用來停止選項的功能*/
+					$("#noselect").attr("disabled",true);/*停用相同class的功能，這裡用來停止選項的功能*/
 				});
 			</script>
 		</c:otherwise>

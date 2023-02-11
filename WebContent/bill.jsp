@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*,java.net.*"%>
-<%@ page import="javax.servlet.http.*,javax.servlet.*" %>
-<%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="java.lang.Math" %>
+<%@ page import="javax.servlet.http.*,javax.servlet.*"%>
+<%@ page import="java.text.SimpleDateFormat"%><!-- JSP時間轉換格式 -->
+<%@ page import="java.lang.Math"%><!-- 處理long類型計算的套件 -->
 <!-- 引入JSTL -->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
@@ -132,7 +132,7 @@
 			<c:remove var="order_id"/>
 		</c:if>
 	</c:forEach>
-	<!-- 新增訂單資料庫資料 -->        
+	<!-- 新增訂單資料表資訊 -->        
 	<c:set var="ID_Value_list" value="${param['ID_Value_list']}"/>
 	<c:forTokens var="ID_Value" delims="," items="${ID_Value_list}">
 		<sql:query dataSource="${DataBase}" var="orderlist">
@@ -140,10 +140,11 @@
 		</sql:query>
 		<c:set var="OrderlistMaxIndex" value="${fn:length(orderlist.rows)}"/><!-- 新增資料後長度會改變，所以要放進迴圈裏面，每次都要查詢 -->
 		<c:set var="array" value="${fn:split(ID_Value,'=')}"/>
-		<c:set var="array_0" value="${array[0]}"/>
-		<c:set var="array_1" value="${array[1]}"/>
-		<c:set var="item_index"/>
-		<c:set var="item_rent_time"/>
+		<c:set var="array_0" value="${array[0]}"/> <!-- 商品編號 -->
+		<c:set var="array_1" value="${array[1]}"/> <!-- 商品租期 -->
+		<c:set var="item_index"/>                  <!-- 商品編號 -->
+		<c:set var="item_rent_time"/>              <!-- 商品租期 -->
+		<!-- 找出item_index以及item_rent_time -->
 		<%
 		String id=(String)pageContext.getAttribute("array_0");
 		String rent=(String)pageContext.getAttribute("array_1");
@@ -152,6 +153,7 @@
 		pageContext.setAttribute("item_index",int_id);
 		pageContext.setAttribute("item_rent_time",int_rent);
 		%>
+		<!-- 新增資料 -->
 		<sql:update dataSource="${DataBase}" var="insert">
    				INSERT INTO orderlist VALUES 
    				(<c:out value='${OrderlistMaxIndex+1}'/>,"<c:out value='${LoginAccount}'/>"
@@ -167,14 +169,14 @@
 	<c:set var="CommodityMaxID" value="${fn:length(commodity.rows)}"/>
 	<!-- 修改訂單的起始時間 -->
 	<c:forEach var="i" begin="1" end="${CommodityMaxID}" step="1">
-		<c:set var="paramName"/>
+		<c:set var="paramName"/><!-- 尋找起始時間的變數名稱 -->
 		<%
 		int i=(int)pageContext.getAttribute("i");
 		String str_i=String.valueOf(i);
 		String param_name="Start"+str_i;
 		pageContext.setAttribute("paramName",param_name);
 		%>
-		<c:if test="${fn:length(param[paramName])>0}">
+		<c:if test="${fn:length(param[paramName])>0}"><!-- 如果有找到起始時間變數，就能修改資料 -->
 			<sql:update dataSource="${DataBase}" var="update">
 				UPDATE orderlist SET start="${param[paramName]}" WHERE order_name="${MaxOrderName}" AND item_index=${i};
 			</sql:update>
@@ -186,11 +188,12 @@
     		SELECT * FROM orderlist;
 		</sql:query>
 		<c:set var="array" value="${fn:split(ID_Value,'=')}"/>
-		<c:set var="array_0" value="${array[0]}"/>
-		<c:set var="array_1" value="${array[1]}"/>
-		<c:set var="item_index"/>
-		<c:set var="item_rent_time"/>
-		<%/*找出item_index以及item_rent_time*/
+		<c:set var="array_0" value="${array[0]}"/> <!-- 商品編號 -->
+		<c:set var="array_1" value="${array[1]}"/> <!-- 商品租期 -->
+		<c:set var="item_index"/>                  <!-- 商品編號 -->
+		<c:set var="item_rent_time"/>              <!-- 商品租期 -->
+		<!-- 找出item_index以及item_rent_time -->
+		<%
 		String id=(String)pageContext.getAttribute("array_0");
 		String rent=(String)pageContext.getAttribute("array_1");
 		int int_id=Integer.parseInt(id);
@@ -206,11 +209,10 @@
 				<fmt:parseDate type="both" value="${start}" var="parsedStart" pattern="yyyy-MM-dd"/>
 				<c:set var="end" value="${parsedStart}"/>
 				<c:set target="${end}" property="time" value="${end.time+month*count}"/>
-				<fmt:formatDate var="parsedEnd" value="${end}" pattern="yyyy-MM-dd"/>
+				<fmt:formatDate var="formattedEnd" value="${end}" pattern="yyyy-MM-dd"/>
 				<sql:update dataSource="${DataBase}" var="update">
-					UPDATE orderlist SET end="${parsedEnd}" WHERE order_name="${MaxOrderName}" AND item_index=${item_index};
+					UPDATE orderlist SET end="${formattedEnd}" WHERE order_name="${MaxOrderName}" AND item_index=${item_index};
 				</sql:update>
-				
 				<!-- 新增價錢 -->
 				<sql:query dataSource="${DataBase}" var="commodity">
     				SELECT * FROM commodity;
@@ -318,7 +320,7 @@
 		<c:otherwise>
 			<div class="container">
 				<div class="row">
-			    	<div class="col-4"></div>
+			    	<div class="col-4"></div><!-- 空白部分 -->
 			    	<div class="col-4" align="center">
 			    		<button type="button" class="btn btn-outline-danger" onclick="javascript:Tocart();">
 		   		        	<script>
@@ -329,7 +331,7 @@
 			            <h1>請重新選擇付款資訊</h1>
 			            </button>
 			    	</div><!-- col-4 -->
-			    	<div class="col-4"></div>	
+			    	<div class="col-4"></div><!-- 空白部分 -->
 			    </div><!-- row -->					
 			</div><!-- container -->
 			<!-- 沒有選擇付款方式，所以把會員的訂單資料重設為原本的樣子 -->
@@ -351,7 +353,7 @@
 	</c:choose>
 	<c:set var="price" value="${param['price']}"/><!-- 總金額 -->  
 	<br> 
-	<h1 align="center">付款金額： <c:out value="${price}"/> 元</h1>
+	<h1 align="center">付款金額： ${price} 元</h1>
 	<div align="center">
 		<br>
 		<button type="button" class="btn btn-outline-dark" onclick="javascript:Return();">
@@ -363,6 +365,17 @@
 			返回會員中心
 		</button>
 	</div>
+	<script>
+		/*完成付款後，清空cookie*/
+		var CommodityMaxID=Number("${CommodityMaxID}");
+		$(document).ready(function(){
+			for(var id=1;id<=CommodityMaxID;id++){
+				$.removeCookie("order"+String(id));
+			}
+			$.removeCookie("select");
+			$.removeCookie("after");
+		});
+	</script>
 	<!-- 引用Bootstrap -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>

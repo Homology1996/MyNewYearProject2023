@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*,java.net.*"%>
-<%@ page import="javax.servlet.http.*,javax.servlet.*" %>
-<%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="java.lang.Math" %>
+<%@ page import="javax.servlet.http.*,javax.servlet.*"%>
+<%@ page import="java.text.SimpleDateFormat"%><!-- JSP時間轉換格式 -->
+<%@ page import="java.lang.Math"%><!-- 處理long類型計算的套件 -->
 <!-- 引入JSTL -->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
@@ -172,6 +172,7 @@
     			SELECT * from member;
 			</sql:query>
 			<br>
+			<br>
 			<div class="container">
 				<div class="row">
 					<table class="table">
@@ -187,12 +188,12 @@
 						<c:forEach var="row" items="${After.rows}">
 							<c:if test="${row.account==Account}">
 								<tr>
-									<td><c:out value="${row.member_index}"/></td>
-									<td><c:out value="${row.name}"/></td>
-									<td><c:out value="${row.phone}"/></td>
-									<td><c:out value="${row.address}"/></td>
-									<td><c:out value="${row.account}"/></td>
-									<td><c:out value="${row.password}"/></td>
+									<td>${row.member_index}</td>
+									<td>${row.name}</td>
+									<td>${row.phone}</td>
+									<td>${row.address}</td>
+									<td>${row.account}</td>
+									<td>${row.password}</td>
 								</tr>
 							</c:if>
 						</c:forEach>
@@ -218,13 +219,13 @@
 						<c:forEach var="row" items="${result.rows}">
 							<c:if test="${row.account==LoginAccount}">
 								<tr>
-									<td><c:out value="${row.member_index}"/></td>
-									<td><c:out value="${row.name}"/></td>
-									<td><c:out value="${row.phone}"/></td>
-									<td><c:out value="${row.address}"/></td>
-									<td><c:out value="${row.account}"/></td>
-									<td><c:out value="${row.password}"/></td>
-									<td><c:out value="${row.order_id}"/></td>
+									<td>${row.member_index}</td>
+									<td>${row.name}</td>
+									<td>${row.phone}</td>
+									<td>${row.address}</td>
+									<td>${row.account}</td>
+									<td>${row.password}</td>
+									<td>${row.order_id}</td>
 									<td>
 										<form action="revise.jsp" method="get">
 											<input type="hidden" name="account" value="${LoginAccount}">
@@ -264,12 +265,12 @@
 						<c:forEach var="row" items="${orderlist.rows}">
 							<c:if test="${row.account==LoginAccount}">
 								<tr>
-									<td><c:out value="${row.order_name}"/></td>
-									<td><c:out value="${row.item_index}"/></td>
-									<td><c:out value="${row.item_rent_time}"/>個月</td>
-									<td><c:out value="${row.start}"/></td>
-									<td><c:out value="${row.end}"/></td>
-									<td><c:out value="${row.price}"/>元</td>
+									<td>${row.order_name}</td>
+									<td>${row.item_index}</td>
+									<td>${row.item_rent_time}個月</td>
+									<td>${row.start}</td>
+									<td>${row.end}</td>
+									<td>${row.price}元</td>
 									<!-- 售後服務按鈕 -->
 									<td>
 										<c:set var="aftersale_order" value="${row.order_name}"/>

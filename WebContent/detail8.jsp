@@ -1,8 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*,java.net.*"%>
-<%@ page import="javax.servlet.http.*,javax.servlet.*" %>
-<%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="java.lang.Math" %>
+<%@ page import="javax.servlet.http.*,javax.servlet.*"%>
+<%@ page import="java.text.SimpleDateFormat"%><!-- JSP時間轉換格式 -->
+<%@ page import="java.lang.Math"%><!-- 處理long類型計算的套件 -->
+<!-- 引入JSTL -->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -23,10 +24,8 @@
 	<!-- 引用jQuery -->
 	<script src="scripts/jquery.min.js"></script>
 	<style>
-	
 		body{
             background-color:rgba(225,245,241,0.947);
-            background-size:cover;
             }
         #align_center{
             width:80%;
@@ -36,7 +35,8 @@
     </style>
 </head>
 <body>
-	<c:set var="itemID" value="8"/>
+	<!-- 設定變數 -->
+	<c:set var="itemID" value="8"/><!-- 此變數的類型為字串 -->
 	<c:set var="imgsrc"/>
 	<c:set var="orderID"/>
 	<%
@@ -46,7 +46,7 @@
 	pageContext.setAttribute("imgsrc",src);
 	pageContext.setAttribute("orderID",order);
 	%>
-	<!-- 載入商品資料庫 -->
+	<!-- 載入資料庫 -->
 	<c:set var="DataBaseName" value="newyear"/>
 	<c:set var="DataBaseUserAccount" value="newyear"/>
 	<c:set var="DataBaseUserPassword" value="newyear"/>
@@ -58,11 +58,14 @@
 	%>
 	<sql:setDataSource var="DataBase" driver="com.mysql.cj.jdbc.Driver"
 	url="${DataBaseURL}" user="${DataBaseUserAccount}" password="${DataBaseUserPassword}"/>
+	<!-- 查詢商品資料表 -->
 	<sql:query dataSource="${DataBase}" var="result">
     	SELECT * FROM commodity;
 	</sql:query>
 	<c:forEach var="row" items="${result.rows}">
 		<c:if test="${row.item_index==itemID}">
+			<!-- 設定商品資訊變數 -->
+			<c:set var="type" value="${row.type}"/>
 			<c:set var="brand" value="${row.brand}"/>
 			<c:set var="location" value="${row.location}"/>
 			<c:set var="cost" value="${row.cost}"/>
@@ -70,26 +73,31 @@
 			<c:set var="life_month" value="${row.life_month}"/>
 		</c:if>
 	</c:forEach>
+	<!-- ------------------------------------------------------------------------------ -->
 	<br>
+	<!-- 顯示商品內容 -->
 	<div class="container-fluid" id="align_center">
 		<div class="row">
-			<div class="col-5">
+			<div class="col-5"><!-- 顯示圖片 -->
 				<img src="${imgsrc}"  width="100%" height="95%">
 			</div><!-- 對應到col-5 -->
 			<div class="col-1"></div><!-- 空白部分 -->
-			<div class="col-6">
-				<h3><span>【WINIA】韓系復古小冰箱(</span></h3>
-				<p><span> 可調式溫度控制</span></p>
-				<p><span> 多功能置物層架</span></p>
-                <p><span> 蔬果保鮮室</span></p>
-                <p><span> 3級能效，時尚與便利兼顧</span></p>			
-                <p><span> 商品編號 : <c:out value="${itemID}"/></span></p>
-                <hr size="8px" width="100%">
-                <h3>商品規格</h3>
-                <p>商品尺寸(寬/深/高)(mm) : 489 x 580 x 918</p>
-                <p>最大容積 : 120L </p>
-                <hr size="8px" width="100%">
-                <h3>每月租金計算</h3>
+			<div class="col-6"><!-- 顯示商品文字資訊 -->
+				<%
+				out.println(
+						"<h3>【WINIA】韓系復古小冰箱</h3>"
+						+"<p>可調式溫度控制</p>"
+						+"<p>多功能置物層架</p>"
+						+"<p>蔬果保鮮室</p>"
+						+"<p>3級能效，時尚與便利兼顧</p>"
+						+"<hr size='8px' width='100%'>"
+						+"<h3>商品規格</h3>"
+						+"<p>商品尺寸(寬/深/高)(mm) : 489 x 580 x 918</p>"
+						+"<p>最大容積 : 120L </p>"
+						+"<hr size='8px' width='100%'>"
+						);
+				%>
+                <h3>平均租金計算</h3>
                 <table class="table table-bordered">
                 	<thead>
                     	<tr>
@@ -110,9 +118,10 @@
 		</div><!-- 對應到row -->
 	</div><!-- 對應到align_center -->
 	<br>
+	<!-- 下方狀態列和相關按鈕 -->
 	<div class="container">
-		<div class="row">
-			<div class="col-6" style="text-align:center;"><!-- 顯示出租狀態與隱藏加入購物車 -->
+		<div class="row page-section justify-content-center align-items-center">
+			<div class="col-5" style="text-align:center;"><!-- 顯示出租狀態與隱藏加入購物車 -->
 				<!-- 找出現在出租的最大時間 -->
 				<c:set var="MaxEnd"/>
 				<sql:query dataSource="${DataBase}" var="orderlist">
@@ -130,15 +139,14 @@
 						}
 						else{
 							try{
+								/*把字串轉換成日期物件*/
 								java.util.Date parsedMaxEnd=formatter.parse(MaxEnd);
 					            java.util.Date parsedThisEnd=formatter.parse(ThisEnd);
-					            long MaxEnd_millisecond=parsedMaxEnd.getTime();
+					            /*把日期物件轉換成數字*/
+					            long MaxEnd_millisecond=parsedMaxEnd.getTime();       
 					            long ThisEnd_millisecond=parsedThisEnd.getTime();
 					            if(ThisEnd_millisecond>MaxEnd_millisecond){
 					            	pageContext.setAttribute("MaxEnd",ThisEnd);
-					            }
-					            else{
-					            	
 					            }
 							}
 							catch (java.text.ParseException e) {
@@ -146,16 +154,18 @@
 					        }
 						}
 						%>
+						<c:remove var="ThisEnd"/>
 					</c:if>
 				</c:forEach>
+				<c:if test="${fn:length(MaxEnd)==0}"><!-- 對應到完全沒有出租的紀錄(ThisEnd全部都是空的) -->
+					<%
+					pageContext.setAttribute("MaxEnd","1996-07-22");
+					%>
+				</c:if>
+				<!-- 定義出租狀態 -->
 				<c:set var="status"/>
 				<c:set var="now" value="<%=new java.util.Date()%>"/>
 				<fmt:formatDate var="today" pattern="yyyy-MM-dd" value="${now}" />
-				<c:if test="${fn:length(MaxEnd)==0}">
-					<%
-						pageContext.setAttribute("MaxEnd","1970-12-30");
-					%>
-				</c:if>
 				<%
 				String MaxEnd=(String)pageContext.getAttribute("MaxEnd");
 				String today=(String)pageContext.getAttribute("today");
@@ -178,16 +188,17 @@
 				%>
 				<c:choose>
 					<c:when test="${status=='ok'}">
-						<h6><span style="color:blue;">出租狀態: 可出租</span></h6>
+						<h3 style="color:blue;" align="center">出租狀態: 可出租</h3>
 					</c:when>
 					<c:otherwise>
-						<h6 align="center"><span style="color:red;">出租狀態: 出租中</span></h6>
-						<h6 align="center">結束時間: <c:out value="${MaxEnd}"/></h6>
+						<h4 style="color:red;" align="center">出租狀態: 出租中</h4>
+						<h4 align="center">結束時間: ${MaxEnd}</h4>
 					</c:otherwise>
 				</c:choose>
-			</div><!-- 對應到col-6 -->
-			<div class="col-2">
-				<button id="AddCart" type="button" class="btn btn-warning" onclick="javascript:AddCart();"><!-- 按下按鍵時就會觸發javascript函數AddCart -->
+			</div><!-- 對應到col-5 -->
+			<div class="col-1"></div><!-- 空白部分 -->
+			<div class="col-2" align="center">
+				<button type="button" class="btn btn-warning" id="AddCart" onclick="javascript:AddCart();"><!-- 按下按鍵時就會觸發javascript函數AddCart -->
 					<script>
             			function AddCart(){
             				/*點擊按鈕後就會新增cookie，並且跳出視窗提示使用者*/
@@ -198,7 +209,7 @@
 					加入購物車
 				</button>
 			</div><!-- 對應到col-2 -->
-			<div class="col-2">
+			<div class="col-2" align="center">
             	<button type="button" class="btn btn-warning" onclick="javascript:GoBack();">
             		<script>
             			function GoBack(){
@@ -207,8 +218,9 @@
             		</script>
             		繼續購物
             	</button>
-            </div><!-- 對應到col-3 -->
-            <div class="col-2">
+            </div><!-- 對應到col-2 -->
+            <!-- 進入購物車時會先檢查登入狀態，有登入才進入購物車，不然就進入登入畫面 -->
+            <div class="col-2" align="center">
             	<button type="button" class="btn btn-warning" onclick="javascript:ToCart();">
             		<sql:query dataSource="${DataBase}" var="result">
     					SELECT account,password from member;
@@ -228,31 +240,26 @@
 	    						pageContext.setAttribute("LoginPassword",Row_password);
 	    						break;
 	    					}
-	    					else{
-	    					}
 	   					}
 						%>
+						<c:remove var="row_account"/>
+						<c:remove var="row_password"/>
 					</c:forEach>	
             		<script>
             			function ToCart(){
-            				if("${LoginPassword}"==GetCookieValueByName("${LoginAccount}")){
-            					window.location.assign("cart.jsp");
-            				}
-            				else{
-            					window.location.assign("login.jsp");
-            				}
-            			}
+							window.location.assign("cart.jsp");
+    					}
             		</script>
             		前往購物車
             	</button>
-            </div><!-- 對應到col-3 -->
+            </div><!-- 對應到col-2 -->
 		</div><!-- 對應到row -->
 	</div><!-- 對應到container -->
 	<script>
 		var hidebutton="${status}";
 		if(hidebutton=="no"){
 			$(document).ready(function(){
-				$("#AddCart").hide();
+				$("#AddCart").attr("disabled",true);/*如果狀態為出租中，那就把按鍵停用*/
 	    	});
 		}
 	</script>

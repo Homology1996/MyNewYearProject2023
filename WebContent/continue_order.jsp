@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*,java.net.*"%>
-<%@ page import="javax.servlet.http.*,javax.servlet.*" %>
-<%@ page import="java.text.SimpleDateFormat" %><!-- JSP時間轉換格式 -->
-<%@ page import="java.lang.Math" %><!-- 處理long類型計算的套件 -->
+<%@ page import="javax.servlet.http.*,javax.servlet.*"%>
+<%@ page import="java.text.SimpleDateFormat"%><!-- JSP時間轉換格式 -->
+<%@ page import="java.lang.Math"%><!-- 處理long類型計算的套件 -->
 <!-- 引入JSTL -->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
@@ -78,7 +78,7 @@
 	<br>
 	<div class="container">
 		<div class="row">
-			<div class="col-1"></div><!-- col-2 -->
+			<div class="col-1"></div><!-- 空白部分 -->
 			<div class="col-2">
 				<button class="btn btn-outline-dark" onclick="javascript:Login();">
 					<script>
@@ -89,7 +89,7 @@
 					會員中心
 				</button>
 			</div><!-- col-2 -->
-			<div class="col-6"></div>
+			<div class="col-6"></div><!-- 空白部分 -->
 			<div class="col-3">
 				<button type="button" class="btn btn-outline-dark" onclick="javascript:Return();">
 					<script>
@@ -99,10 +99,11 @@
 					</script>
 					返回首頁
 				</button>
-			</div><!-- col-2 -->
+			</div><!-- col-3 -->
 		</div><!-- row -->
 	</div><!-- container -->
 	<br>
+	<!-- 查詢本次售後服務訂單 -->
 	<div class="container">
 		<div class="row">
 			<table class="table">
@@ -125,12 +126,12 @@
 						pageContext.setAttribute("imageID",ImageID);
 						%>
 						<tr>
-							<td><c:out value="${row.order_name}"/></td>
-							<td><c:out value="${row.item_index}"/></td>
-							<td><c:out value="${row.item_rent_time}"/>個月</td>
-							<td><c:out value="${row.start}"/></td>
-							<td><c:out value="${row.end}"/></td>
-							<td><c:out value="${row.price}"/>元</td>
+							<td>${row.order_name}</td>
+							<td>${row.item_index}</td>
+							<td>${row.item_rent_time}個月</td>
+							<td>${row.start}</td>
+							<td>${row.end}</td>
+							<td>${row.price}元</td>
 						</tr>
 					</c:if>
 				</c:forEach>
@@ -142,7 +143,7 @@
 			<div class="row">
 				<div class="col-6">
 					<img src="${imageID}" width="95%" height="95%">
-				</div><!-- 對應到picID -->
+				</div>
 				<div class="col-6">
 					<h3 align="center">選擇延長時間</h3>
 					<br>
