@@ -1,0 +1,2 @@
+Dynamic Web Project->Next->Next
+Content directory可以改成WebContent，記得勾選Generate web.xml

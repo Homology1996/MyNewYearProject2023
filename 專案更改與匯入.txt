@@ -1,0 +1,9 @@
+(1)
+專案更新檔案可以對資料夾按refresh來更新，不用慢慢等
+
+(2)
+匯入專案
+左邊按Import->Import...->General->Projects from Folder or Archive(或是Existing Projects into Workspace)
+->選擇Directory->對匯入的專案按右鍵->Build Path->Configure Build Path->把該引進的jar檔重新匯入
+(例如mysql-connector-j)
+
